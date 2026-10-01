@@ -1,0 +1,29 @@
+{
+  "name": "slot-engine-demo",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "dependencies": {
+    "@pixi/assets": "^7.4.3",
+    "@pixi/sound": "^6.0.1",
+    "eventemitter3": "^5.0.4",
+    "events": "^3.3.0",
+    "pixi.js": "^8.21.0"
+  },
+  "devDependencies": {
+    "@types/node": "^26.6.3",
+    "typescript": "^7.0.2",
+    "vite": "^8.3.1",
+    "vitest": "^5.0.2"
+  }
+}

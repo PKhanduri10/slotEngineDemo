@@ -1,0 +1,13 @@
+{
+  "bundles": [
+    {
+      "name": "game-assets",
+      "assets": [
+        { "alias": "sym_wild", "src": "assets/textures/symbols/sym_wild.png" },
+        { "alias": "sym_scatter", "src": "assets/textures/symbols/sym_scatter.png" },
+        { "alias": "sym_high1", "src": "assets/textures/symbols/sym_high1.png" },
+        { "alias": "sym_low1", "src": "assets/textures/symbols/sym_low1.png" }
+      ]
+    }
+  ]
+}
