@@ -19,7 +19,7 @@ The architecture decouples the core math/state engine from the rendering layer u
   │ • GameState FSM │      │ • PixiJS Stage  │      │ • SymbolManager │
   │ • Paytable/Math │      │ • Grid & Reels  │      │ • AssetLoader   │
   │ • Wallet Model  │      │ • HUD Controls  │      │ • Audio/Effects │
-  └─────────────────┘      └─────────────────┘      └─────────────────┘
+  └─────────────────┘      └─────────────────┘      └─────────────────┘''
 # Prerequisites
 Node.js: v18.x or higher
 
