@@ -2,6 +2,7 @@ import * as PIXI from 'pixi.js';
 import { GameStateModel, GameState } from './models/GameStateModel';
 import { NetworkService } from './services/NetworkService';
 import { SymbolManager } from './managers/SymbolManager';
+import { ReelAnimationManager } from './managers/ReelAnimationManager';
 import { GridView } from './views/GridView';
 import { HUDView } from './views/HUDView';
 import { EventBus, GameEvents } from './core/EventBus';
@@ -11,6 +12,7 @@ export class GameController {
     private stateModel: GameStateModel;
     private networkService: NetworkService;
     private symbolManager: SymbolManager;
+    private animationManager!: ReelAnimationManager;
     private gridView!: GridView;
     private hudView!: HUDView;
     private eventBus = EventBus.getInstance();
@@ -22,6 +24,7 @@ export class GameController {
         this.symbolManager = new SymbolManager(30);
 
         this.setupUI();
+        this.animationManager = new ReelAnimationManager(this.gridView);
         this.setupListeners();
     }
 
@@ -54,8 +57,11 @@ export class GameController {
         this.stateModel.transitionTo(GameState.SPINNING);
 
         try {
+            // Fetch RNG Data from Network
             const rngData = await this.networkService.fetchRNGResult();
-            console.log('[RNG Data Received]:', rngData);
+
+            // Run GSAP Sequential Reel Spin Animation
+            await this.animationManager.spinReels(rngData.matrix);
 
             this.stateModel.transitionTo(GameState.EVALUATING);
 

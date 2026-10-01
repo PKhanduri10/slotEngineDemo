@@ -25,8 +25,8 @@ export class GridView extends PIXI.Container {
 
     public updateGrid(matrix: number[][]): void {
         this.reels.forEach((reel, colIndex) => {
-            const columnColors = matrix.map((row) => row[colIndex]);
-            reel.updateSymbols(columnColors);
+            const columnValues = matrix.map((row) => row[colIndex]);
+            reel.updateSymbols(columnValues);
         });
     }
 }

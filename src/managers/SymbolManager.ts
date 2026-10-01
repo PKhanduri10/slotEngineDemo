@@ -1,5 +1,6 @@
 import * as PIXI from 'pixi.js';
 import { ObjectPool } from '../core/ObjectPool';
+import { SYMBOL_BY_ID } from '../config/SymbolConfig';
 
 export class SymbolManager {
     private pool: ObjectPool<PIXI.Sprite>;
@@ -15,20 +16,33 @@ export class SymbolManager {
             },
             (sprite) => {
                 sprite.visible = false;
+                sprite.texture = PIXI.Texture.WHITE;
+                sprite.tint = 0xffffff;
                 sprite.position.set(0, 0);
             },
             initialPoolSize
         );
     }
 
-    public getSymbol(colorHex: number = 0xff0000): PIXI.Sprite {
+    public getSymbol(symbolId: number = 0): PIXI.Sprite {
         const sprite = this.pool.get();
-        sprite.tint = colorHex;
-        sprite.visible = true;
+        this.applySymbol(sprite, symbolId);
+        this.activeSprites.add(sprite);
         return sprite;
     }
 
+    public applySymbol(sprite: PIXI.Sprite, symbolId: number): void {
+        const definition = SYMBOL_BY_ID.get(symbolId) ?? SYMBOL_BY_ID.get(0)!;
+        const isFallbackTexture = definition.texture === PIXI.Texture.WHITE;
+
+        sprite.texture = definition.texture;
+        sprite.tint = isFallbackTexture ? definition.fallbackColor : 0xffffff;
+        sprite.visible = true;
+        (sprite as PIXI.Sprite & { symbolId?: number }).symbolId = symbolId;
+    }
+
     public recycleSymbol(sprite: PIXI.Sprite): void {
+        this.activeSprites.delete(sprite);
         this.pool.release(sprite);
     }
 }
