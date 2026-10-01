@@ -5,25 +5,21 @@ A production-grade, modular HTML5 Slot Game Engine built with **TypeScript**, **
 
 The architecture decouples the core math/state engine from the rendering layer using an asynchronous EventBus.
 
-``src/
-├── assets/                  # Texture manifests and AssetLoader service
-│   └── AssetLoader.ts
-├── core/                    # Engine core utilities
-│   ├── EventBus.ts          # Strongly-typed Event Emitter
-│   └── ObjectPool.ts        # Generic High-Performance Object Pool
-├── models/                  # Business logic & Data layer
-│   └── GameStateModel.ts    # FSM State machine implementation
-├── views/                   # PixiJS Rendering components
-│   ├── GridView.ts          # 3x5 Grid container manager
-│   ├── ReelView.ts          # Individual reel column rendering
-│   └── HUDView.ts           # Spin button & UI overlays
-├── managers/                # Resource and pooling managers
-│   └── SymbolManager.ts     # Sprite allocation & recycling
-├── services/                # External APIs
-│   └── NetworkService.ts    # Server RNG payload simulation
-├── Controller.ts            # Main Mediator binding Model, View & Services
-└── main.ts                  # App Entry Point & PixiJS Canvas Bootstrap''
-
+```text
+                       ┌─────────────────────────┐
+                       │     GAME CONTROLLER     │
+                       │   (Mediator / Engine)   │
+                       └────────────┬────────────┘
+                                    │
+           ┌────────────────────────┼────────────────────────┐
+           │                        │                        │
+  ┌────────▼────────┐      ┌────────▼────────┐      ┌────────▼────────┐
+  │   MODEL LAYER   │      │   VIEW LAYER    │      │    MANAGERS     │
+  │                 │      │                 │      │                 │
+  │ • GameState FSM │      │ • PixiJS Stage  │      │ • SymbolManager │
+  │ • Paytable/Math │      │ • Grid & Reels  │      │ • AssetLoader   │
+  │ • Wallet Model  │      │ • HUD Controls  │      │ • Audio/Effects │
+  └─────────────────┘      └─────────────────┘      └─────────────────┘
 # Prerequisites
 Node.js: v18.x or higher
 
@@ -33,8 +29,8 @@ npm: v9.x or higher
 Clone the repository:
 
 Bash
-git clone [https://github.com/YOUR_USERNAME/slot-game-engine.git](https://github.com/YOUR_USERNAME/slot-game-engine.git)
-cd slot-game-engine
+git clone https://github.com/PKhanduri10/slotEngineDemo.git
+cd slotEngineDemo
 Install dependencies:
 
 Bash
