@@ -1,11 +1,13 @@
 import * as PIXI from 'pixi.js';
 import { GameStateModel, GameState } from './models/GameStateModel';
 import { NetworkService } from './services/NetworkService';
+import { WinEvaluator } from './services/WinEvaluator';
 import { SymbolManager } from './managers/SymbolManager';
 import { ReelAnimationManager } from './managers/ReelAnimationManager';
 import { GridView } from './views/GridView';
-import { HUDView } from './views/HUDView';
+import { ButtonPanel } from './views/ButtonPanel';
 import { EventBus, GameEvents } from './core/EventBus';
+import { WinPanel } from './views/WinPanel';
 
 export class GameController {
     private stage: PIXI.Container;
@@ -14,7 +16,10 @@ export class GameController {
     private symbolManager: SymbolManager;
     private animationManager!: ReelAnimationManager;
     private gridView!: GridView;
-    private hudView!: HUDView;
+    private hudView!: ButtonPanel;
+    private winPanel!: WinPanel;
+    private balance = 1000;
+    private bet = 1;
     private eventBus = EventBus.getInstance();
 
     constructor(stage: PIXI.Container) {
@@ -33,8 +38,12 @@ export class GameController {
         this.gridView.position.set(320, 180);
         this.stage.addChild(this.gridView);
 
-        this.hudView = new HUDView();
-        this.hudView.position.set(570, 600);
+        this.winPanel = new WinPanel();
+        this.winPanel.position.set(640, 360);
+        this.stage.addChild(this.winPanel);
+
+        this.hudView = new ButtonPanel();
+        this.hudView.position.set(400, 610);
         this.stage.addChild(this.hudView);
     }
 
@@ -55,6 +64,9 @@ export class GameController {
         }
 
         this.stateModel.transitionTo(GameState.SPINNING);
+        this.balance -= this.bet;
+        this.hudView.setBalance(this.balance);
+        this.winPanel.hide();
 
         try {
             // Fetch RNG Data from Network
@@ -64,10 +76,12 @@ export class GameController {
             await this.animationManager.spinReels(rngData.matrix);
 
             this.stateModel.transitionTo(GameState.EVALUATING);
+            const { totalWin } = WinEvaluator.evaluate(rngData.matrix);
+            this.balance += totalWin;
+            this.hudView.setBalance(this.balance);
 
-            if (rngData.totalWin > 0) {
-                this.stateModel.transitionTo(GameState.WIN_CELEBRATION);
-                await new Promise((res) => setTimeout(res, 1500));
+            if (totalWin > 0) {
+                this.winPanel.showWin(totalWin);
             }
         } catch (error) {
             console.error('[Spin Error]:', error);

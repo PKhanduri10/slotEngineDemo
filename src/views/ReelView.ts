@@ -1,22 +1,32 @@
 import * as PIXI from 'pixi.js';
+import { REEL_WIDTH, SYMBOL_ROW_HEIGHT } from '../config/SymbolConfig';
 import { SymbolManager } from '../managers/SymbolManager';
 
 export class ReelView extends PIXI.Container {
     private symbolManager: SymbolManager;
     public symbolSprites: PIXI.Sprite[] = [];
-    private readonly symbolIds: number[] = [0, 1, 2, 3, 4];
+    private readonly symbolIds: number[] = [0, 1, 2, 3, 4, 5, 6, 7];
 
     public reelIndex: number;
     public rows: number;
-    public symbolHeight: number = 140;
+    public symbolHeight: number;
     public blurFilter: PIXI.BlurFilter;
+    private readonly reelWidth: number;
     private stopSymbols: number[] | null = null;
 
-    constructor(symbolManager: SymbolManager, reelIndex: number, rows: number = 3) {
+    constructor(
+        symbolManager: SymbolManager,
+        reelIndex: number,
+        rows: number = 3,
+        symbolHeight: number = SYMBOL_ROW_HEIGHT,
+        reelWidth: number = REEL_WIDTH
+    ) {
         super();
         this.symbolManager = symbolManager;
         this.reelIndex = reelIndex;
         this.rows = rows;
+        this.symbolHeight = symbolHeight;
+        this.reelWidth = reelWidth;
 
         // Blur Filter create karein high speed spin effect ke liye
         this.blurFilter = new PIXI.BlurFilter();
@@ -31,7 +41,7 @@ export class ReelView extends PIXI.Container {
     // Clip/Hide symbols outside reel view
     private createReelMask(): void {
         const maskGraphics = new PIXI.Graphics();
-        maskGraphics.rect(0, 0, 130, this.rows * this.symbolHeight);
+        maskGraphics.rect(0, 0, this.reelWidth, this.rows * this.symbolHeight);
         maskGraphics.fill(0xffffff);
         this.addChild(maskGraphics);
         this.mask = maskGraphics;
@@ -57,7 +67,7 @@ export class ReelView extends PIXI.Container {
             (sprite as PIXI.Sprite & { symbolValue?: number; symbolLabel?: PIXI.Text }).symbolValue = randomValue;
             (sprite as PIXI.Sprite & { symbolValue?: number; symbolLabel?: PIXI.Text }).symbolLabel = label;
 
-            sprite.x = 10;
+            sprite.x = (this.reelWidth - sprite.width) / 2;
             sprite.y = r * this.symbolHeight;
             this.addChild(sprite);
             this.symbolSprites.push(sprite);

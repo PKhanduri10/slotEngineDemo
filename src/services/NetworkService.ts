@@ -1,26 +1,16 @@
-import { WinEvaluator } from './WinEvaluator';
-
 export interface SpinResponse {
     matrix: number[][]; // 3x5 Grid
-    totalWin: number;
-    winningLines: number[];
 }
 
 export class NetworkService {
     public createDummyResult(): SpinResponse {
         const matrix: number[][] = [
             [0, 1, 2, 3, 4],
-            [0, 1, 2, 3, 4],
-            [0, 1, 2, 3, 4],
+            [5, 6, 7, 0, 1],
+            [2, 3, 4, 5, 6],
         ];
 
-        const { totalWin, winningLines } = WinEvaluator.evaluate(matrix);
-
-        return {
-            matrix,
-            totalWin,
-            winningLines,
-        };
+        return { matrix };
     }
 
     public async fetchRNGResult(): Promise<SpinResponse> {
@@ -29,7 +19,7 @@ export class NetworkService {
 
         const rows = 3;
         const cols = 5;
-        const symbolPool = [0, 1, 2, 3, 4];
+        const symbolPool = [0, 1, 2, 3, 4, 5, 6, 7];
 
         const matrix = Array.from({ length: rows }, () =>
             Array.from({ length: cols }, () =>
@@ -37,12 +27,6 @@ export class NetworkService {
             )
         );
 
-        const { totalWin, winningLines } = WinEvaluator.evaluate(matrix);
-
-        return {
-            matrix,
-            totalWin,
-            winningLines,
-        };
+        return { matrix };
     }
 }

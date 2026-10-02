@@ -3,7 +3,7 @@ import { GridView } from '../views/GridView';
 import { ReelView } from '../views/ReelView';
 
 export class ReelAnimationManager {
-    private static readonly MAX_SPIN_SPEED = 8;
+    private static readonly MAX_SPIN_SPEED = 25;
 
     private gridView: GridView;
 
@@ -18,12 +18,14 @@ export class ReelAnimationManager {
 
         await Promise.all(spinPromises);
     }
+  
 
     private spinSingleReel(reel: ReelView, reelIndex: number, finalColumnValues: number[]): Promise<void> {
         return new Promise((resolve) => {
             const spinState = {
                 elapsed: 0,
                 speed: 0,
+                
             };
 
             const staggerDelay = reelIndex * 0.2;
