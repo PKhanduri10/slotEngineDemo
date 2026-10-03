@@ -39,14 +39,24 @@ jobs:
         with:
           path: 'dist/'
 
-  deploy:
-    needs: build-and-deploy
-    runs-on: ubuntu-latest
+    deploy:
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    
+    # Required permissions for GitHub Pages OIDC deployment
+    permissions:
+      pages: write      # Pages deployment permission
+      id-token: write   # OIDC token permission for GitHub Pages authentication
+      contents: read
 
     steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # ... aapke build / artifact upload steps ...
+
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
