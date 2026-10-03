@@ -5,5 +5,9 @@ export type AssetEntry = {
 };
 
 export const GAME_ASSET_MANIFEST: AssetEntry[] = [
-    { alias: 'symbols-sheet', spritePath: '/graphics/symbols.png', atlasPath: '/graphics/symbols.json' },
+    {
+        alias: 'symbols-sheet',
+        spritePath: `${import.meta.env.BASE_URL}graphics/symbols.png`,
+        atlasPath: `${import.meta.env.BASE_URL}graphics/symbols.json`,
+    },
 ];

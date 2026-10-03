@@ -79,7 +79,6 @@ export class AssetLoader {
             return loadedTexture;
         }
 
-        const spriteSheet = PIXI.Assets.get(alias) as { textures?: Record<string, PIXI.Texture> } | undefined;
-        return spriteSheet?.textures?.[frameName] ?? PIXI.Texture.WHITE;
+        return PIXI.Texture.WHITE;
     }
 }

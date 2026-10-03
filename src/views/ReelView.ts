@@ -5,6 +5,7 @@ import { SymbolManager } from '../managers/SymbolManager';
 export class ReelView extends PIXI.Container {
     private symbolManager: SymbolManager;
     public symbolSprites: PIXI.Sprite[] = [];
+    private symbolLabels: PIXI.Text[] = [];
     private readonly symbolIds: number[] = [0, 1, 2, 3, 4, 5, 6, 7];
 
     public reelIndex: number;
@@ -30,8 +31,8 @@ export class ReelView extends PIXI.Container {
 
         // Blur Filter create karein high speed spin effect ke liye
         this.blurFilter = new PIXI.BlurFilter();
-        this.blurFilter.blurX = 0;
-        this.blurFilter.blurY = 0;
+        this.blurFilter.strengthX = 0;
+        this.blurFilter.strengthY = 0;
         this.filters = [this.blurFilter];
 
         this.createReelMask();
@@ -61,29 +62,22 @@ export class ReelView extends PIXI.Container {
                 },
             });
             label.anchor.set(0.5);
-            label.position.set(sprite.width / 2, sprite.height / 2);
-            sprite.addChild(label);
-
-            (sprite as PIXI.Sprite & { symbolValue?: number; symbolLabel?: PIXI.Text }).symbolValue = randomValue;
-            (sprite as PIXI.Sprite & { symbolValue?: number; symbolLabel?: PIXI.Text }).symbolLabel = label;
 
             sprite.x = (this.reelWidth - sprite.width) / 2;
             sprite.y = r * this.symbolHeight;
+            label.position.set(sprite.x + sprite.width / 2, sprite.y + sprite.height / 2);
             this.addChild(sprite);
+            this.addChild(label);
             this.symbolSprites.push(sprite);
+            this.symbolLabels.push(label);
         }
     }
 
     private applySymbolValue(sprite: PIXI.Sprite, value: number): void {
         const symbolValue = value % this.symbolIds.length;
-        const meta = sprite as PIXI.Sprite & { symbolValue?: number; symbolLabel?: PIXI.Text };
-
         this.symbolManager.applySymbol(sprite, symbolValue);
-        meta.symbolValue = symbolValue;
-
-        if (meta.symbolLabel) {
-            meta.symbolLabel.text = String(symbolValue);
-        }
+        const label = this.symbolLabels[this.symbolSprites.indexOf(sprite)];
+        if (label) label.text = String(symbolValue);
     }
 
     public prepareStopSymbols(values: number[]): void {
@@ -106,12 +100,14 @@ export class ReelView extends PIXI.Container {
         const totalHeight = (this.rows + 2) * this.symbolHeight;
         let stopSequenceReady = false;
 
-        this.symbolSprites.forEach((sprite) => {
+        this.symbolSprites.forEach((sprite, index) => {
             sprite.y += speed;
+            this.symbolLabels[index].y += speed;
 
             // Threshold check: jab symbol bottom viewport ke bahar nikal jaye
             if (sprite.y >= (this.rows + 1) * this.symbolHeight) {
                 sprite.y -= totalHeight; // Send back to top
+                this.symbolLabels[index].y -= totalHeight;
                 if (this.stopSymbols !== null) {
                     const nextValue = this.stopSymbols.shift();
                     if (nextValue !== undefined) {
@@ -134,6 +130,7 @@ export class ReelView extends PIXI.Container {
         console.log("target matrix",values)
         this.symbolSprites.forEach((sprite, index) => {
             sprite.y = (index - 1) * this.symbolHeight;
+            this.symbolLabels[index].y = sprite.y + sprite.height / 2;
 
             if (index === 0 || index === this.rows + 1) {
                 const fallbackValue = this.symbolIds[Math.floor(Math.random() * this.symbolIds.length)];

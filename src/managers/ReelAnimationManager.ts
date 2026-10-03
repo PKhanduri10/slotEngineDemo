@@ -71,7 +71,7 @@ export class ReelAnimationManager {
                     remainingStopDistance -= scrollStep;
                     if (decelerationElapsed >= decelerationDuration || remainingStopDistance <= 0.001) {
                         reel.clearStopSymbols();
-                        reel.blurFilter.blurY = 0;
+                        reel.blurFilter.strengthY = 0;
                         PIXI.Ticker.shared.remove(tick);
                         resolve();
                         return;
@@ -83,7 +83,7 @@ export class ReelAnimationManager {
                     decelerationStarted = true;
                 }
 
-                reel.blurFilter.blurY = spinState.speed * 0.2;
+                reel.blurFilter.strengthY = spinState.speed * 0.2;
             };
 
             PIXI.Ticker.shared.add(tick);
