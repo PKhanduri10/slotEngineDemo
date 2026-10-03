@@ -1,4 +1,5 @@
 import * as PIXI from 'pixi.js';
+import 'pixi.js/text';
 import { AssetLoader } from './assets/AssetLoader';
 import { ResponsiveGameContainer } from './views/ResponsiveGameContainer';
 
